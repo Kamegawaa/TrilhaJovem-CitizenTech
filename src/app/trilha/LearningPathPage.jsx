@@ -33,7 +33,7 @@ export default function LearningPathPage() {
 
   return (
     <main className="path-shell">
-      <header className="path-header"><a href="/feed">← Voltar ao feed</a><a className="path-brand" href="/">Trilha<span>Jovem</span></a></header>
+      <header className="path-header"><a href="/feed">← Voltar ao feed</a><nav><a href="/oportunidades">Cursos gratuitos ↗</a><a className="path-brand" href="/">Trilha<span>Jovem</span></a></nav></header>
       <section className="path-hero">
         <p className="path-kicker">DA CURIOSIDADE AO CONHECIMENTO</p>
         <h1>Uma descoberta<br/><span>pode abrir muitos caminhos.</span></h1>
