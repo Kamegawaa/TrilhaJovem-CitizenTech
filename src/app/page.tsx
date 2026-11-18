@@ -9,7 +9,7 @@ export default function HomePage() {
           Um lugar para descobrir assuntos novos, experimentar possibilidades
           e transformar curiosidade em conhecimento.
         </p>
-        <div className="home-actions"><a href="/descobrir">Explorar conhecimentos ↗</a><a href="/quiz">Experimentar o quiz ↗</a></div>
+        <div className="home-actions"><a href="/descobrir">Explorar conhecimentos ↗</a><a href="/aptidoes">Descobrir meus interesses ↗</a><a href="/quiz">Experimentar o quiz ↗</a></div>
         <div className="status" role="status">
           <span className="status-dot" aria-hidden="true" />
           Estamos preparando sua próxima descoberta.
