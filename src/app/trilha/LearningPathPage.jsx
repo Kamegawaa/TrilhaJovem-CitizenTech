@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
 import "./trilha.css";
 
 const STEPS = [
@@ -11,8 +10,7 @@ const STEPS = [
 ];
 
 export default function LearningPathPage() {
-  const params = useSearchParams();
-  const [topic, setTopic] = useState(params.get("assunto") || "");
+  const [topic, setTopic] = useState("");
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -31,7 +29,7 @@ export default function LearningPathPage() {
     finally { setLoading(false); }
   }
 
-  useEffect(() => { const initial = params.get("assunto"); if (initial) load(initial); }, [params]);
+  useEffect(() => { const initial = new URLSearchParams(window.location.search).get("assunto") || ""; if (initial) { setTopic(initial); load(initial); } }, []);
 
   return (
     <main className="path-shell">
