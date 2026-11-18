@@ -28,7 +28,11 @@ export default function FeedPage() {
       const saved = JSON.parse(window.localStorage.getItem(PREFERENCE_KEY) || "[]");
       if (Array.isArray(saved)) setPreferences(saved.filter((item) => AREAS.includes(item)));
     } catch { /* Preferências inválidas são ignoradas. */ }
-    try {\n      const savedItems = JSON.parse(window.localStorage.getItem(SAVED_KEY) || "[]");\n      if (Array.isArray(savedItems)) setSavedItems(savedItems);\n    } catch { /* Itens inválidos são ignorados. */ }\n    setPreferencesReady(true);
+    try {
+      const savedItems = JSON.parse(window.localStorage.getItem(SAVED_KEY) || "[]");
+      if (Array.isArray(savedItems)) setSavedItems(savedItems);
+    } catch { /* Itens inválidos são ignorados. */ }
+    setPreferencesReady(true);
   }, []);
 
   useEffect(() => {
@@ -53,12 +57,25 @@ export default function FeedPage() {
     return () => { active = false; };
   }, []);
 
-  useEffect(() => {\n    if (!preferencesReady) return;\n    try { window.localStorage.setItem(SAVED_KEY, JSON.stringify(savedItems)); }\n    catch { /* Favoritos continuam disponíveis durante a sessão. */ }\n  }, [savedItems, preferencesReady]);\n\n  const visibleStories = useMemo(
+  useEffect(() => {
+    if (!preferencesReady) return;
+    try { window.localStorage.setItem(SAVED_KEY, JSON.stringify(savedItems)); }
+    catch { /* Favoritos continuam disponíveis durante a sessão. */ }
+  }, [savedItems, preferencesReady]);
+
+  const visibleStories = useMemo(
     () => preferences.length ? stories.filter((story) => preferences.includes(story.category)) : stories,
     [preferences, stories],
   );
 
-  function toggleSaved(story, source) {\n    const id = source?.url || story.query;\n    setSavedItems((current) => current.some((item) => item.id === id)\n      ? current.filter((item) => item.id !== id)\n      : [...current, { id, query: story.query, category: story.category, tag: story.tag, title: story.title, note: story.note, source: source || null }]);\n  }\n\n  function togglePreference(area) {
+  function toggleSaved(story, source) {
+    const id = source?.url || story.query;
+    setSavedItems((current) => current.some((item) => item.id === id)
+      ? current.filter((item) => item.id !== id)
+      : [...current, { id, query: story.query, category: story.category, tag: story.tag, title: story.title, note: story.note, source: source || null }]);
+  }
+
+  function togglePreference(area) {
     setPreferences((current) => current.includes(area)
       ? current.filter((item) => item !== area)
       : [...current, area]);
@@ -98,7 +115,8 @@ export default function FeedPage() {
                 <span className="story-tag">{story.tag}</span>
                 <h2>{story.title}</h2>
                 <p>{story.note}</p>
-                <a className="story-link" href={`/trilha?assunto=${encodeURIComponent(story.query)}`}>Começar minha trilha <span>↗</span></a>\n                <button type="button" className="story-save" aria-pressed={savedItems.some((item) => item.id === (source?.url || story.query))} onClick={() => toggleSaved(story, source)}>{savedItems.some((item) => item.id === (source?.url || story.query)) ? "✓ Salvo" : "+ Salvar descoberta"}</button>
+                <a className="story-link" href={`/trilha?assunto=${encodeURIComponent(story.query)}`}>Começar minha trilha <span>↗</span></a>
+                <button type="button" className="story-save" aria-pressed={savedItems.some((item) => item.id === (source?.url || story.query))} onClick={() => toggleSaved(story, source)}>{savedItems.some((item) => item.id === (source?.url || story.query)) ? "✓ Salvo" : "+ Salvar descoberta"}</button>
                 {source && <a className="story-source-link" href={source.url} target="_blank" rel="noreferrer">Ver referência: {source.title} ↗</a>}
                 <small>{source ? `Referência: ${source.source} · ${source.title}` : "Explore fontes abertas de conhecimento"}</small>
               </div>
