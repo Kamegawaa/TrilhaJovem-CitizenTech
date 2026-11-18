@@ -19,6 +19,16 @@
 
 Os arquivos oficiais podem servir a um importador próprio em etapa posterior. Microdados são arquivos estruturados, não presumir que exista API REST para tudo.
 
+## NASA Astronomy Picture of the Day (APOD)
+
+- Endpoint: `GET https://api.nasa.gov/planetary/apod`.
+- Conector inicial: `src/lib/sources/nasa-apod.mjs`.
+- Chave: variável de ambiente `NASA_API_KEY`; `DEMO_KEY` é fallback limitado para desenvolvimento.
+- O conector normaliza título, explicação, data, tipo de mídia, URL, miniatura e crédito.
+- Registros entram em `needs_rights_review`; a API não concede automaticamente direito de redistribuir imagens ou vídeos de terceiros.
+- A integração atual é um adaptador isolado com testes simulados; ainda não há ingestão agendada, persistência ou publicação no feed.
+- Documentação: https://api.nasa.gov/ e https://github.com/nasa/apod-api.
+
 ## Fontes candidatas para outras áreas
 
 | Fonte | Uso potencial | Validação necessária |
