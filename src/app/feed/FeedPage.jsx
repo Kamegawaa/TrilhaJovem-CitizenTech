@@ -47,7 +47,7 @@ export default function FeedPage() {
           const source = story.results[0];
           return (
             <article className={`story-card story-${story.tone}`} key={story.query}>
-              <div className="story-art" aria-hidden="true"><span className="story-orbit orbit-one"/><span className="story-orbit orbit-two"/><span className="story-symbol">{story.mark}</span><span className="story-index">0{index + 1} / 0{TOPICS.length}</span></div>
+              <div className="story-art" aria-hidden="true">{source?.imageUrl && <img className="story-image" src={source.imageUrl} alt="" loading="lazy"/>}<span className="story-orbit orbit-one"/><span className="story-orbit orbit-two"/><span className="story-symbol">{story.mark}</span><span className="story-index">0{index + 1} / 0{TOPICS.length}</span></div>
               <div className="story-copy">
                 <span className="story-tag">{story.tag}</span>
                 <h2>{story.title}</h2>
