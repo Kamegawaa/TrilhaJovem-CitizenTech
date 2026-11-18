@@ -15,3 +15,9 @@ The adapter validates the supported year range (2009–2023), limits each reques
 - Confirm license compatibility and review media assets before publication.
 
 Official reference: https://www.gov.br/inep/pt-br/areas-de-atuacao/avaliacao-e-exames-educacionais/enem/provas-e-gabaritos
+
+## Application delivery endpoint
+
+The application exposes `GET /api/quiz/enem?year=2020&discipline=mathematics&limit=10&offset=0`. Supported discipline values are `languages`, `human-sciences`, `natural-sciences`, and `mathematics`. The optional `language` filter accepts `english` or `spanish` only with `languages`.
+
+Before returning data to the browser, the API removes the correct alternative and correctness flags from both questions and alternatives. Answer keys must never be included in the learner-facing payload.
