@@ -15,3 +15,8 @@
 .story-business{--story-a:#66502e;--story-b:#292014}
 @media(max-width:680px){.feed-personalize-heading{align-items:flex-start;flex-direction:column}.feed-preference-list{gap:7px}.feed-preference{font-size:.74rem;padding:9px 11px}}
 @media(prefers-reduced-motion:reduce){.feed-preference,.feed-clear{transition:none}}
+
+.story-save{margin-top:10px;padding:9px 2px;border:0;background:transparent;color:#c5c1bc;font:inherit;font-size:.78rem;cursor:pointer}
+.story-save:hover,.story-save[aria-pressed="true"]{color:#b7f36b}
+.feed-topbar nav{flex-wrap:wrap}
+@media(prefers-reduced-motion:reduce){.story-save{transition:none}}
