@@ -1,17 +1,17 @@
-# ENEM quiz question contract
+# ENEM question source connector
 
-This contract is the source-independent foundation for short, interactive ENEM quizzes.
+The first provider is [API ENEM](https://api.enem.dev/), a community-maintained, unaffiliated API with 2,700+ questions from 2009–2023.
 
-## Data and provenance
+Documented endpoints include `GET /v1/exams`, `GET /v1/exams/{year}`, `GET /v1/exams/{year}/questions`, and `GET /v1/exams/{year}/questions/{index}`. This connector implements the paginated questions endpoint.
 
-Every question carries its exam year, ENEM subject area, five alternatives, answer, explanation, source name and URL, and an explicit rights status. Imported questions default to `needs_rights_review`; ingestion does not imply permission to republish exam text or supporting images.
+The adapter validates the supported year range (2009–2023), limits each request to 50 records, supports offset/language filters, uses an 8-second timeout, and marks HTTP 429/5xx errors as retryable.
 
-## Client/server boundary
+## Boundaries
 
-- `toPublicQuizQuestion` removes the answer and explanation before the question reaches the learner.
-- `evaluateQuizAnswer` evaluates a submitted option and returns correctness, the correct alternative, and the explanation.
-- Keep answer keys and explanations on the server until the learner submits.
+- This is a community project, not an official INEP/MEC API.
+- Newer exam years must not be assumed available.
+- Preserve source records; do not invent editorial explanations.
+- Keep answer keys server-side until submission.
+- Confirm license compatibility and review media assets before publication.
 
-## Source integration
-
-The contract does not claim that INEP offers a public question API. A future connector must use an official, verifiable source (such as INEP's published exams and answer keys), preserve attribution, and pass the rights review before publication.
+Official reference: https://www.gov.br/inep/pt-br/areas-de-atuacao/avaliacao-e-exames-educacionais/enem/provas-e-gabaritos
