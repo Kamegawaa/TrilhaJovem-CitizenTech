@@ -14,4 +14,8 @@ Every question carries its exam year, ENEM subject area, five alternatives, answ
 
 ## Source integration
 
-The contract does not claim that INEP offers a public question API. A future connector must use an official, verifiable source (such as INEP's published exams and answer keys), preserve attribution, and pass the rights review before publication.
+The first question provider is [API ENEM](https://api.enem.dev/), a community-maintained project, not an official INEP API. It currently documents question data for 2009–2023 and supports pagination by year. The connector uses `GET /v1/exams/{year}/questions`.
+
+Official INEP exams and answer keys remain the authoritative validation reference: https://www.gov.br/inep/pt-br/areas-de-atuacao/avaliacao-e-exames-educacionais/enem/provas-e-gabaritos
+
+Source records are not silently converted into editorial explanations. Preserve provenance, confirm license compatibility, and review question assets before publication.
