@@ -31,13 +31,16 @@ export async function GET() {
       },
     );
   } catch (error) {
-    const status = error?.status === 429 ? 503 : 502;
+    const sourceError = error as { status?: number; retryable?: boolean } | null;
+    const rateLimited = sourceError?.status === 429;
+    const status = rateLimited ? 503 : 502;
+
     return NextResponse.json(
       {
         error: {
-          code: error?.status === 429 ? 'SOURCE_RATE_LIMITED' : 'SOURCE_UNAVAILABLE',
+          code: rateLimited ? 'SOURCE_RATE_LIMITED' : 'SOURCE_UNAVAILABLE',
           message: 'Não foi possível consultar a fonte de astronomia agora.',
-          retryable: error?.retryable ?? true,
+          retryable: sourceError?.retryable ?? true,
         },
       },
       { status, headers: { 'Cache-Control': 'no-store' } },
