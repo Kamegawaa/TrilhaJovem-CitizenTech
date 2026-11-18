@@ -33,7 +33,7 @@ export default function FeedPage() {
     <main className="feed-shell">
       <header className="feed-topbar">
         <a className="feed-logo" href="/">Trilha<span>Jovem</span></a>
-        <nav><a href="/descobrir">Pesquisar</a><a href="/quiz">Quiz ENEM ↗</a></nav>
+        <nav><a href="/descobrir">Pesquisar</a><a href="/oportunidades">Cursos gratuitos</a><a href="/quiz">Quiz ENEM ↗</a></nav>
       </header>
       <section className="feed-intro">
         <p className="feed-overline">UM MUNDO DE POSSIBILIDADES</p>
