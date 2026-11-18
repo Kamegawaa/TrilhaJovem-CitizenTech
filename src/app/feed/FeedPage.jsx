@@ -52,7 +52,7 @@ export default function FeedPage() {
                 <span className="story-tag">{story.tag}</span>
                 <h2>{story.title}</h2>
                 <p>{story.note}</p>
-                {source ? <a className="story-link" href={source.url} target="_blank" rel="noreferrer">Começar a explorar <span>↗</span></a> : <a className="story-link" href={`/descobrir`}>Pesquisar assunto ↗</a>}
+                {<a className="story-link" href={`/trilha?assunto=${encodeURIComponent(story.query)}`}>Começar minha trilha <span>↗</span></a>}{source && <a className="story-source-link" href={source.url} target="_blank" rel="noreferrer">Ver referência: {source.title} ↗</a>}
                 <small>{source ? `Referência: ${source.source} · ${source.title}` : "Explore fontes abertas de conhecimento"}</small>
               </div>
             </article>
