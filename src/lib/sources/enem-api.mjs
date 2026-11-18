@@ -2,7 +2,7 @@ const API_BASE = 'https://api.enem.dev/v1';
 const MIN_YEAR = 2009;
 const MAX_YEAR = 2023;
 
-export async function fetchEnemQuestions({ year, limit = 10, offset = 0, language, fetchImpl = fetch } = {}) {
+export async function fetchEnemQuestions({ year, limit = 10, offset = 0, discipline, language, fetchImpl = fetch } = {}) {
   const parsedYear = Number(year);
   if (!Number.isInteger(parsedYear) || parsedYear < MIN_YEAR || parsedYear > MAX_YEAR) {
     throw new TypeError(`ENEM API currently supports years from ${MIN_YEAR} to ${MAX_YEAR}.`);
@@ -13,6 +13,7 @@ export async function fetchEnemQuestions({ year, limit = 10, offset = 0, languag
   const url = new URL(`${API_BASE}/exams/${parsedYear}/questions`);
   url.searchParams.set('limit', String(limit));
   url.searchParams.set('offset', String(offset));
+  if (discipline) url.searchParams.set('discipline', discipline);
   if (language) url.searchParams.set('language', language);
 
   const response = await fetchImpl(url, {
