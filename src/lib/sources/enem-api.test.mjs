@@ -40,3 +40,15 @@ test('rejects malformed API payloads', async () => {
   await assert.rejects(() => fetchEnemQuestions({ year: 2020, fetchImpl: mockFetch({ questions: [] }) }),
     /invalid questions payload/);
 });
+
+test('passes discipline and language filters to the source API', async () => {
+  const result = await fetchEnemQuestions({
+    year: 2020, discipline: 'languages', language: 'english',
+    fetchImpl: async (url) => {
+      assert.equal(url.searchParams.get('discipline'), 'languages');
+      assert.equal(url.searchParams.get('language'), 'english');
+      return { ok: true, status: 200, json: async () => payload };
+    },
+  });
+  assert.equal(result.questions.length, 2);
+});
