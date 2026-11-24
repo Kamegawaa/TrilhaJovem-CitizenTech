@@ -13,7 +13,7 @@ export default function EnemQuiz(){
   const [selected,setSelected]=useState("");
   const [answers,setAnswers]=useState([]);
   const [finished,setFinished]=useState(false);
-  const questions=useMemo(()=>area==="Todas"?DEMO_QUESTIONS.slice(0,5):DEMO_QUESTIONS.filter((item)=>item.area===area),[area]);
+  const questions=useMemo(()=>area==="Todas"?DEMO_QUESTIONS:DEMO_QUESTIONS.filter((item)=>item.area===area),[area]);
   const question=questions[position];
   const score=answers.filter((answer)=>answer.correct).length;
   function begin(){setStarted(true);setPosition(0);setSelected("");setAnswers([]);setFinished(false);}
