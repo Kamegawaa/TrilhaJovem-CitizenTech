@@ -1,130 +1,58 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import "./feed.css";
+import Link from "next/link";
+import { DISCOVERIES, INTEREST_AREAS } from "@/lib/mock-data";
 
 const SAVED_KEY = "trilhajovem.saved-discoveries";
-
 const PREFERENCE_KEY = "trilhajovem.feed.interests";
-const AREAS = ["Ciências e natureza", "Humanas e sociedade", "Tecnologia e criação", "Negócios e gestão"];
-const TOPICS = [
-  { query: "astronomia", category: "Ciências e natureza", tag: "UNIVERSO", title: "O universo é muito maior do que parece", note: "Olhe para cima. A próxima descoberta pode estar a milhões de anos-luz.", tone: "cosmos", mark: "✦" },
-  { query: "inteligência artificial", category: "Tecnologia e criação", tag: "TECNOLOGIA", title: "Estamos ensinando máquinas a pensar?", note: "Entenda a tecnologia que já está mudando o jeito como vivemos e trabalhamos.", tone: "future", mark: "⌁" },
-  { query: "Mata Atlântica", category: "Ciências e natureza", tag: "NATUREZA", title: "Uma floresta inteira tentando respirar", note: "Biodiversidade, equilíbrio e soluções para proteger o lugar onde vivemos.", tone: "earth", mark: "❋" },
-  { query: "psicologia", category: "Humanas e sociedade", tag: "COMPORTAMENTO", title: "Por que sua mente faz isso?", note: "Conhecer como pensamos também é uma forma de descobrir quem podemos ser.", tone: "mind", mark: "◌" },
-  { query: "empreendedorismo", category: "Negócios e gestão", tag: "IDEIAS E NEGÓCIOS", title: "Como uma ideia vira realidade?", note: "Explore criatividade, iniciativa e caminhos para tirar projetos do papel.", tone: "business", mark: "↗" },
-];
 
 export default function FeedPage() {
-  const [stories, setStories] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [failed, setFailed] = useState(false);
-  const [preferences, setPreferences] = useState([]);
-  const [preferencesReady, setPreferencesReady] = useState(false);
-  const [savedItems, setSavedItems] = useState([]);
+  const [preferences,setPreferences] = useState([]);
+  const [savedItems,setSavedItems] = useState([]);
+  const [ready,setReady] = useState(false);
 
   useEffect(() => {
     try {
-      const saved = JSON.parse(window.localStorage.getItem(PREFERENCE_KEY) || "[]");
-      if (Array.isArray(saved)) setPreferences(saved.filter((item) => AREAS.includes(item)));
-    } catch { /* Preferências inválidas são ignoradas. */ }
+      const savedPrefs = JSON.parse(localStorage.getItem(PREFERENCE_KEY) || "[]");
+      if (Array.isArray(savedPrefs)) setPreferences(savedPrefs.filter((item) => INTEREST_AREAS.includes(item)));
+    } catch {}
     try {
-      const savedItems = JSON.parse(window.localStorage.getItem(SAVED_KEY) || "[]");
-      if (Array.isArray(savedItems)) setSavedItems(savedItems);
-    } catch { /* Itens inválidos são ignorados. */ }
-    setPreferencesReady(true);
+      const saved = JSON.parse(localStorage.getItem(SAVED_KEY) || "[]");
+      if (Array.isArray(saved)) setSavedItems(saved);
+    } catch {}
+    setReady(true);
   }, []);
 
   useEffect(() => {
-    if (!preferencesReady) return;
+    if (!ready) return;
     try {
-      if (preferences.length) window.localStorage.setItem(PREFERENCE_KEY, JSON.stringify(preferences));
-      else window.localStorage.removeItem(PREFERENCE_KEY);
-    } catch { /* O feed continua funcionando sem armazenamento local. */ }
-  }, [preferences, preferencesReady]);
+      if (preferences.length) localStorage.setItem(PREFERENCE_KEY,JSON.stringify(preferences));
+      else localStorage.removeItem(PREFERENCE_KEY);
+    } catch {}
+  },[preferences,ready]);
 
-  useEffect(() => {
-    let active = true;
-    Promise.all(TOPICS.map(async (topic) => {
-      const response = await fetch(`/api/discover/search?q=${encodeURIComponent(topic.query)}`);
-      if (!response.ok) throw new Error("Feed indisponível");
-      const data = await response.json();
-      return { ...topic, results: data.results || [] };
-    }))
-      .then((items) => { if (active) setStories(items); })
-      .catch(() => { if (active) setFailed(true); })
-      .finally(() => { if (active) setLoading(false); });
-    return () => { active = false; };
-  }, []);
+  const visible = useMemo(() => preferences.length ? DISCOVERIES.filter((item) => preferences.includes(item.category)) : DISCOVERIES,[preferences]);
 
-  useEffect(() => {
-    if (!preferencesReady) return;
-    try { window.localStorage.setItem(SAVED_KEY, JSON.stringify(savedItems)); }
-    catch { /* Favoritos continuam disponíveis durante a sessão. */ }
-  }, [savedItems, preferencesReady]);
-
-  const visibleStories = useMemo(
-    () => preferences.length ? stories.filter((story) => preferences.includes(story.category)) : stories,
-    [preferences, stories],
-  );
-
-  function toggleSaved(story, source) {
-    const id = source?.url || story.query;
-    setSavedItems((current) => current.some((item) => item.id === id)
-      ? current.filter((item) => item.id !== id)
-      : [...current, { id, query: story.query, category: story.category, tag: story.tag, title: story.title, note: story.note, source: source || null }]);
+  function toggleSaved(item) {
+    setSavedItems((current) => {
+      const exists = current.some((saved) => saved.id === item.id);
+      const next = exists ? current.filter((saved) => saved.id !== item.id) : [...current,item];
+      try { localStorage.setItem(SAVED_KEY,JSON.stringify(next)); } catch {}
+      return next;
+    });
   }
-
   function togglePreference(area) {
-    setPreferences((current) => current.includes(area)
-      ? current.filter((item) => item !== area)
-      : [...current, area]);
+    setPreferences((current) => current.includes(area) ? current.filter((value) => value !== area) : [...current,area]);
   }
 
   return (
-    <main className="feed-shell">
-      <header className="feed-topbar">
-        <a className="feed-logo" href="/">Trilha<span>Jovem</span></a>
-        <nav><a href="/descobrir">Pesquisar</a><a href="/aptidoes">Meus interesses</a><a href="/salvos">Salvos ({savedItems.length})</a><a href="/oportunidades">Cursos gratuitos</a><a href="/quiz">Quiz ENEM ↗</a></nav>
-      </header>
-      <section className="feed-intro">
-        <p className="feed-overline">UM MUNDO DE POSSIBILIDADES</p>
-        <h1>Hoje você pode<br/><span>descobrir algo novo.</span></h1>
-        <p>Histórias, ideias e conhecimentos para alimentar sua curiosidade.</p>
-      </section>
-      <section className="feed-personalize" aria-label="Personalizar assuntos do feed">
-        <div className="feed-personalize-heading">
-          <div><span className="feed-overline">SEU FEED, SEUS INTERESSES</span><p>Escolha assuntos para destacar no seu feed.</p></div>
-          {preferences.length > 0 && <button className="feed-clear" onClick={() => setPreferences([])}>Mostrar tudo</button>}
-        </div>
-        <div className="feed-preference-list">
-          {AREAS.map((area) => <button key={area} type="button" className={preferences.includes(area) ? "feed-preference selected" : "feed-preference"} aria-pressed={preferences.includes(area)} onClick={() => togglePreference(area)}>{preferences.includes(area) ? "✓" : "+"} {area}</button>)}
-        </div>
-        <small>{preferences.length ? `${preferences.length} área(s) selecionada(s). Preferências salvas somente neste dispositivo.` : "Todas as áreas estão aparecendo. Suas escolhas ficam salvas somente neste dispositivo."}</small>
-      </section>
-      <section className="feed-stories" aria-label="Feed de descobertas" aria-live="polite">
-        {loading && <p className="feed-message">Preparando suas descobertas...</p>}
-        {failed && <div className="feed-message" role="alert">Não conseguimos carregar o feed agora. <button onClick={() => window.location.reload()}>Tentar novamente</button></div>}
-        {!loading && !failed && visibleStories.length === 0 && <p className="feed-message">Ainda não há descobertas para essas áreas. Selecione outra área ou mostre tudo.</p>}
-        {!loading && !failed && visibleStories.map((story, index) => {
-          const source = story.results[0];
-          return (
-            <article className={`story-card story-${story.tone}`} key={story.query}>
-              <div className="story-art" aria-hidden="true">{source?.imageUrl && <img className="story-image" src={source.imageUrl} alt="" loading="lazy"/>}<span className="story-orbit orbit-one"/><span className="story-orbit orbit-two"/><span className="story-symbol">{story.mark}</span><span className="story-index">0{index + 1} / 0{visibleStories.length}</span></div>
-              <div className="story-copy">
-                <span className="story-tag">{story.tag}</span>
-                <h2>{story.title}</h2>
-                <p>{story.note}</p>
-                <a className="story-link" href={`/trilha?assunto=${encodeURIComponent(story.query)}`}>Começar minha trilha <span>↗</span></a>
-                <button type="button" className="story-save" aria-pressed={savedItems.some((item) => item.id === (source?.url || story.query))} onClick={() => toggleSaved(story, source)}>{savedItems.some((item) => item.id === (source?.url || story.query)) ? "✓ Salvo" : "+ Salvar descoberta"}</button>
-                {source && <a className="story-source-link" href={source.url} target="_blank" rel="noreferrer">Ver referência: {source.title} ↗</a>}
-                <small>{source ? `Referência: ${source.source} · ${source.title}` : "Explore fontes abertas de conhecimento"}</small>
-              </div>
-            </article>
-          );
-        })}
-      </section>
-      <footer className="feed-footer"><span>Da curiosidade à oportunidade.</span><span>Conteúdo referenciado em fontes abertas</span></footer>
+    <main className="page-container">
+      <section className="page-hero compact-hero"><div><span className="eyebrow">UM MUNDO DE POSSIBILIDADES</span><h1>Hoje você pode descobrir <span>algo novo.</span></h1><p>Ideias, perguntas e conhecimentos para alimentar sua curiosidade. Escolha um assunto e siga por onde ele te levar.</p></div><div className="hero-side-note"><span>✦</span><strong>{DISCOVERIES.length} caminhos</strong><small>para começar a explorar</small></div></section>
+      <section className="filter-panel"><div className="filter-heading"><div><span className="eyebrow">SEU FEED, SEUS INTERESSES</span><p>Escolha áreas para destacar assuntos que combinam com sua curiosidade.</p></div>{preferences.length>0&&<button className="quiet-button" onClick={()=>setPreferences([])}>Mostrar tudo</button>}</div><div className="chip-row">{INTEREST_AREAS.map((area)=><button type="button" key={area} className={"filter-chip "+(preferences.includes(area)?"selected":"")} onClick={()=>togglePreference(area)} aria-pressed={preferences.includes(area)}>{preferences.includes(area)?"✓":"+"} {area}</button>)}</div><small>{preferences.length?"Seu feed está personalizado. Você pode mudar essas escolhas quando quiser.":"Todas as áreas estão aparecendo. Suas escolhas ficam salvas somente neste dispositivo."}</small></section>
+      <div className="section-heading feed-section-heading"><div><span className="eyebrow">ESCOLHA POR ONDE COMEÇAR</span><h2>{preferences.length?"Assuntos em destaque para você":"Descobertas em destaque"}</h2></div><span className="result-count">{visible.length} assuntos</span></div>
+      <section className="discovery-grid">{visible.map((item,index)=>{const saved=savedItems.some((entry)=>entry.id===item.id);return <article className={"discovery-card tone-"+item.accent} key={item.id}><div className="discovery-art"><span className="art-index">0{index+1}</span><span className="art-symbol">{item.symbol}</span><span className="art-label">{item.tag}</span></div><div className="discovery-card-body"><div className="card-meta"><span className="category-label">{item.category}</span><span>{item.readTime}</span></div><h3>{item.title}</h3><p>{item.summary}</p><div className="card-actions"><Link href={"/trilha?assunto="+encodeURIComponent(item.query)} className="card-link">Começar trilha ↗</Link><button className={"save-button "+(saved?"is-saved":"")} type="button" onClick={()=>toggleSaved(item)} aria-pressed={saved}>{saved?"♥ Salvo":"♡ Salvar"}</button></div><a className="source-inline" href={item.source.url} target="_blank" rel="noreferrer">Fonte para continuar: {item.source.name} ↗</a></div></article>;})}</section>
+      <div className="end-note"><span>✳</span><p>Não existe uma ordem certa. Explore assuntos diferentes e descubra o que faz sentido para você.</p><Link href="/descobrir">Pesquisar outro assunto ↗</Link></div>
     </main>
   );
 }

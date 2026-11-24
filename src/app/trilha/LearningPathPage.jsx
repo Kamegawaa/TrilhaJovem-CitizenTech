@@ -1,54 +1,39 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import "./trilha.css";
+import { useEffect,useMemo,useState } from "react";
+import Link from "next/link";
+import { DISCOVERIES,findDiscovery } from "@/lib/mock-data";
 
-const STEPS = [
-  { number: "01", title: "Desperte a curiosidade", description: "Comece pelo panorama geral. Descubra os conceitos e as perguntas que movem esse assunto." },
-  { number: "02", title: "Faça conexões", description: "Observe como essa ideia se relaciona com outras áreas e com situações do mundo real." },
-  { number: "03", title: "Vá mais fundo", description: "Use as referências para continuar estudando, comparar perspectivas e construir seu próprio repertório." },
+const STEPS=[
+  {title:"Desperte a curiosidade",description:"Comece pelo panorama geral. Descubra conceitos, palavras-chave e perguntas que movem esse assunto.",action:"Observar e perguntar"},
+  {title:"Faça conexões",description:"Relacione o tema com outras áreas, situações do cotidiano e questões que importam para você.",action:"Conectar ideias"},
+  {title:"Vá mais fundo",description:"Explore referências, compare perspectivas e escolha um próximo passo para continuar aprendendo.",action:"Aprofundar"}
 ];
+const PROGRESS_KEY="trilhajovem.path-progress";
 
 export default function LearningPathPage() {
-  const [topic, setTopic] = useState("");
-  const [items, setItems] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [topic,setTopic]=useState("astronomia");
+  const [completed,setCompleted]=useState([]);
+  const discovery=useMemo(()=>findDiscovery(topic),[topic]);
 
-  async function load(value) {
-    const term = value.trim();
-    if (term.length < 2) { setError("Escolha um assunto com pelo menos duas letras."); return; }
-    setLoading(true); setError(""); setItems([]);
-    try {
-      const response = await fetch(`/api/discover/search?q=${encodeURIComponent(term)}`);
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error || "Não foi possível montar sua trilha.");
-      setItems(data.results || []);
-      if (!data.results?.length) setError("Não encontramos referências para esse assunto. Tente outro termo.");
-    } catch (err) { setError(err.message || "Tente novamente em instantes."); }
-    finally { setLoading(false); }
+  useEffect(()=>{const initial=new URLSearchParams(window.location.search).get("assunto");if(initial)setTopic(initial);},[]);
+  useEffect(()=>{try{const all=JSON.parse(localStorage.getItem(PROGRESS_KEY)||"{}");setCompleted(Array.isArray(all[discovery.id])?all[discovery.id]:[]);}catch{setCompleted([]);}},[discovery.id]);
+
+  function toggleStep(index){
+    setCompleted((current)=>{const next=current.includes(index)?current.filter((item)=>item!==index):[...current,index];let all={};try{all=JSON.parse(localStorage.getItem(PROGRESS_KEY)||"{}");}catch{}all[discovery.id]=next;try{localStorage.setItem(PROGRESS_KEY,JSON.stringify(all));}catch{}return next;});
   }
-
-  useEffect(() => { const initial = new URLSearchParams(window.location.search).get("assunto") || ""; if (initial) { setTopic(initial); load(initial); } }, []);
+  function selectTopic(value){setTopic(value);window.history.replaceState({},"","/trilha?assunto="+encodeURIComponent(value));}
+  const progress=Math.round(completed.length/3*100);
 
   return (
-    <main className="path-shell">
-      <header className="path-header"><a href="/feed">← Voltar ao feed</a><nav><a href="/oportunidades">Cursos gratuitos ↗</a><a className="path-brand" href="/">Trilha<span>Jovem</span></a></nav></header>
-      <section className="path-hero">
-        <p className="path-kicker">DA CURIOSIDADE AO CONHECIMENTO</p>
-        <h1>Uma descoberta<br/><span>pode abrir muitos caminhos.</span></h1>
-        <p>Escolha um assunto. A gente reúne referências para você começar, conectar ideias e continuar explorando.</p>
-        <form onSubmit={(event) => { event.preventDefault(); load(topic); }}>
-          <input value={topic} onChange={(event) => setTopic(event.target.value)} placeholder="Ex.: astronomia, biologia, economia..." aria-label="Assunto da trilha" maxLength={100}/>
-          <button disabled={loading}>{loading ? "Montando..." : "Montar minha trilha ↗"}</button>
-        </form>
-      </section>
-      <section className="path-steps" aria-label="Etapas da trilha">
-        {STEPS.map((step) => <article key={step.number}><span>{step.number}</span><div><h2>{step.title}</h2><p>{step.description}</p></div></article>)}
-      </section>
-      {error && <p className="path-error" role="alert">{error}</p>}
-      {items.length > 0 && <section className="path-resources"><div><p className="path-kicker">SEU PONTO DE PARTIDA</p><h2>Referências sobre {topic}</h2><p>Materiais encontrados em fontes abertas. Use-os como início da investigação, não como ponto final.</p></div><div className="path-resource-list">{items.map((item, index) => <article key={item.id}><span>0{index + 1}</span><div><h3>{item.title}</h3>{item.description && <p>{item.description}</p>}<small>{item.source}</small></div><a href={item.url} target="_blank" rel="noreferrer" aria-label={`Abrir ${item.title}`}>↗</a></article>)}</div></section>}
-      <footer className="path-footer">Aprender não é chegar rápido. É descobrir até onde sua curiosidade pode levar.</footer>
+    <main className="page-container">
+      <section className="page-hero path-page-hero"><div><span className="eyebrow">DA CURIOSIDADE AO CONHECIMENTO</span><h1>Uma descoberta pode abrir <span>muitos caminhos.</span></h1><p>Escolha um tema e avance no seu ritmo. A trilha é um ponto de partida — você decide até onde quer chegar.</p></div><div className="path-progress-card"><div className="progress-ring" style={{"--progress":String(progress)+"%"}}><strong>{progress}%</strong></div><span>SEU PROGRESSO</span><small>{completed.length} de 3 etapas concluídas</small></div></section>
+      <section className="topic-picker"><div><span className="eyebrow">ESCOLHA UM TEMA</span><h2>Qual assunto vamos explorar?</h2></div><div className="topic-select-row"><select value={discovery.id} onChange={(event)=>selectTopic(event.target.value)} aria-label="Selecionar assunto">{DISCOVERIES.map((item)=><option key={item.id} value={item.id}>{item.query}</option>)}</select><span>⌄</span></div></section>
+      <section className="path-feature-card"><div className={"path-feature-art tone-"+discovery.accent}><span>{discovery.symbol}</span><small>{discovery.tag}</small></div><div className="path-feature-copy"><span className="category-label">{discovery.category} · {discovery.readTime}</span><h2>{discovery.title}</h2><p>{discovery.summary}</p><div className="path-question"><small>PERGUNTA-GUIA</small><strong>{discovery.question}</strong></div></div></section>
+      <section className="path-steps-section"><div className="section-heading"><div><span className="eyebrow">UM PASSO DE CADA VEZ</span><h2>Seu caminho de aprendizagem</h2></div><span className="result-count">{completed.length}/3 concluídas</span></div><div className="path-step-list">{STEPS.map((step,index)=><article className={"path-step "+(completed.includes(index)?"complete":"")} key={step.title}><button className="step-check" onClick={()=>toggleStep(index)} aria-pressed={completed.includes(index)} aria-label={completed.includes(index)?"Marcar "+step.title+" como não concluída":"Marcar "+step.title+" como concluída"}>{completed.includes(index)?"✓":"0"+(index+1)}</button><div className="path-step-copy"><span>{step.action}</span><h3>{step.title}</h3><p>{step.description}</p></div><span className="step-status">{completed.includes(index)?"Concluída":"Etapa sugerida"}</span></article>)}</div></section>
+      <section className="resources-section"><div className="section-heading"><div><span className="eyebrow">REFERÊNCIAS PARA CONTINUAR</span><h2>Explore mais sobre {discovery.query}</h2></div><a className="text-link" href={discovery.source.url} target="_blank" rel="noreferrer">Fonte principal ↗</a></div><div className="resource-grid">{discovery.resources.map((resource,index)=><article className="resource-card" key={resource.title}><span>0{index+1} / {resource.kind}</span><h3>{resource.title}</h3><p>{resource.description}</p><a href={resource.url} target="_blank" rel="noreferrer">Abrir referência ↗</a></article>)}</div></section>
+      <section className="next-step-banner"><div><span className="eyebrow">QUANDO QUISER IR ALÉM</span><h2>Curiosidade também vira oportunidade.</h2><p>Conheça plataformas para continuar aprendendo e experimentar novas possibilidades.</p></div><Link className="button button-primary" href="/oportunidades">Encontrar oportunidades ↗</Link></section>
+      <p className="prototype-note">Seu progresso é salvo somente neste navegador. As trilhas e atividades são sugestões demonstrativas de aprendizagem.</p>
     </main>
   );
 }
