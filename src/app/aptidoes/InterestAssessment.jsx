@@ -24,7 +24,7 @@ export default function InterestAssessment(){
   const result=useMemo(()=>{const counts={};Object.values(answers).forEach((area)=>{counts[area]=(counts[area]||0)+1;});return Object.entries(counts).sort((a,b)=>b[1]-a[1])[0]?.[0];},[answers]);
   const area=result?DETAILS[result]:null;
   const score=result?Object.values(answers).filter((value)=>value===result).length:0;
-  const toneByArea={"Ciências e natureza":"forest","Humanas e sociedade":"coral","Tecnologia e criação":"mint","Negócios e gestão":"amber"};
+  const toneByArea={"Ciências e natureza":"forest","Humanas e sociedade":"coral","Tecnologia e criação":"blue","Negócios e gestão":"amber"};
   const activeArea=done?result:answers[step];
   const activeTone=activeArea?toneByArea[activeArea]:"neutral";
   function choose(value){setAnswers((current)=>({...current,[step]:value}));}

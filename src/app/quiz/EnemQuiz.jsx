@@ -16,7 +16,7 @@ export default function EnemQuiz(){
   const questions=useMemo(()=>area==="Todas"?DEMO_QUESTIONS:DEMO_QUESTIONS.filter((item)=>item.area===area),[area]);
   const question=questions[position];
   const score=answers.filter((answer)=>answer.correct).length;
-  const toneByArea={"Matemática":"sun","Ciências humanas":"coral","Ciências da natureza":"forest","Linguagens":"violet","Tecnologia e criação":"mint"};
+  const toneByArea={"Matemática":"sun","Ciências humanas":"coral","Ciências da natureza":"forest","Linguagens":"violet","Tecnologia e criação":"blue"};
   const activeArea=question?.area || (area==="Todas"?"":area);
   const activeTone=activeArea?toneByArea[activeArea]:"neutral";
   function begin(){setStarted(true);setPosition(0);setSelected("");setAnswers([]);setFinished(false);}
