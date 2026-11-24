@@ -2,42 +2,50 @@
 
 **Da curiosidade à oportunidade.**
 
-Aplicativo mobile-first para jovens brasileiros de 18 a 24 anos descobrirem áreas de conhecimento, experimentarem desafios, aprofundarem interesses e encontrarem caminhos de formação e trabalho.
+Aplicação demonstrativa para jovens brasileiros de 18 a 24 anos descobrirem interesses, explorarem conteúdos educativos, experimentarem trilhas de aprendizagem e encontrarem oportunidades de formação.
 
-## Premissas aprovadas
+## Experiência disponível
 
-- Público de 18 a 24 anos; abrangência nacional.
-- Experiência mobile-first, com PWA como entrega inicial.
-- Guest-first: sem cadastro obrigatório; preferências e progresso inicialmente locais.
-- Sem publicações de usuários; conteúdo alimentado por fontes externas e curadoria editorial.
-- Interface escura e player escuro.
-- Linguagem jovem, acolhedora e expressiva; sem estética de luxo ou corporativa.
-- Conteúdos audiovisuais curtos com linguagem cinematográfica/edit, apoiados por fontes verificáveis.
-- Motion for React para interações; GSAP apenas para sequências especiais; sem 3D pesado no MVP.
-- Performance, acessibilidade e baixo consumo de dados como requisitos.
-- Custo de infraestrutura pretendido: zero no MVP, sujeito às franquias e limites dos serviços gratuitos.
+- **Início:** apresentação do projeto e acesso rápido aos caminhos principais.
+- **Descobertas:** feed de temas com filtros por área e opção de salvar.
+- **Pesquisar:** busca local por temas e perguntas para iniciar uma exploração.
+- **Interesses:** questionário curto que sugere áreas e assuntos para experimentar. Não é teste vocacional.
+- **Trilhas:** etapas de aprendizagem, referências externas e progresso salvo no navegador.
+- **Oportunidades:** diretório inicial de plataformas de formação, com filtros e links oficiais.
+- **Salvos:** coleção de descobertas guardadas no dispositivo.
+- **Desafio:** quiz interativo com correção, explicações e resultado.
 
-## Documentação do produto
+## Dados demonstrativos
 
-- [Decisões de produto](docs/decisions/DECISIONS.md)
-- [Arquitetura do pipeline de APIs](docs/architecture/API_PIPELINE.md)
-- [Modelo editorial do feed](docs/product/FEED_EDITORIAL.md)
-- [Quizzes rápidos com questões do ENEM](docs/product/QUIZ_ENEM.md)
-- [Fontes, cobertura e licenças](docs/research/SOURCES_AND_LICENSES.md)
-- [Plano de entregas do MVP](docs/roadmap/MVP_DELIVERY.md)
+O frontend funciona sem autenticação, banco de dados ou chamadas externas para carregar as telas. O catálogo editorial, as trilhas e as questões do quiz ficam em `src/lib/mock-data.js`.
 
-## Jornada principal
+As respostas do questionário, preferências do feed, descobertas salvas e progresso das trilhas são armazenados no `localStorage` do navegador. Esses dados não são enviados para um servidor.
 
-Descobrir → assistir/ler → consultar fontes → experimentar um quiz ou desafio → aprofundar em uma trilha → encontrar cursos e oportunidades → acompanhar a própria jornada.
+Os conteúdos e questões do protótipo são exemplos para demonstrar a experiência. As perguntas do desafio não são questões oficiais do ENEM. Links para fontes de referência e plataformas externas permitem continuar a pesquisa; requisitos e disponibilidade devem ser conferidos nos respectivos sites.
 
-## Estado atual
+## Executar localmente
 
-**Planejamento e arquitetura.** A documentação registra decisões e propostas; ainda não há aplicação, integrações, banco ou hospedagem implementados.
+Requisitos: Node.js compatível com Next.js 16 e npm.
 
-## Fontes de referência
+```bash
+npm install
+npm run dev
+```
 
-- [INEP — Provas e gabaritos do ENEM](https://www.gov.br/inep/pt-br/areas-de-atuacao/avaliacao-e-exames-educacionais/enem/provas-e-gabaritos)
-- [INEP — Microdados do ENEM](https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/enem)
-- [API comunitária ENEM](https://api.enem.dev/)
-- [Documentação da API ENEM](https://docs.enem.dev/)
-- [Repositório da API ENEM](https://github.com/yunger7/enem-api)
+Abra `http://localhost:3000`.
+
+Para validar a versão de produção:
+
+```bash
+npm run typecheck
+npm run lint
+npm run build
+```
+
+## Publicação
+
+O projeto utiliza Next.js e pode ser conectado a um projeto Vercel a partir deste repositório. Antes da avaliação, publique a branch integrada e percorra as rotas principais em desktop e celular.
+
+## Escopo do protótipo
+
+O objetivo é demonstrar a jornada **descobrir → reconhecer interesses → aprofundar → encontrar oportunidades**, sem exigir cadastro e sem simular uma rede social. O progresso e as preferências são locais ao dispositivo utilizado.
