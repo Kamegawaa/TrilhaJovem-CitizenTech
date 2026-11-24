@@ -1,3 +1,3 @@
 import EnemQuiz from "./EnemQuiz";
-export const metadata={title:"Desafio ENEM",description:"Pratique questões do ENEM no seu ritmo. Errar também faz parte de aprender."};
+export const metadata={title:"Desafio de aprendizagem",description:"Experimente perguntas demonstrativas, confira explicações e acompanhe seu resultado."};
 export default function QuizPage(){return <EnemQuiz/>;}

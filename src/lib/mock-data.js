@@ -39,6 +39,11 @@ export const DISCOVERIES = [
     {title:"Como a web funciona",kind:"Conexão",description:"Entenda navegador, servidor e os bastidores de uma página.",url:"https://developer.mozilla.org/pt-BR/docs/Learn_web_development/Getting_started/Your_first_website"},
     {title:"Coloque a mão no código",kind:"Aprofundamento",description:"Pratique com exemplos e desafios guiados.",url:"https://www.freecodecamp.org/portuguese/learn/"}
   ]}
+  ,{ id:"empreendedorismo",query:"empreendedorismo",category:"Negócios e gestão",tag:"IDEIAS E NEGÓCIOS",title:"Como uma ideia vira realidade?",summary:"Criatividade, planejamento e colaboração ajudam a transformar um problema em uma iniciativa. Explore como projetos nascem e ganham forma.",question:"Como identificar uma necessidade real antes de propor uma solução?",readTime:"6 min de curiosidade",symbol:"↗",accent:"amber",searchTerms:["negócios","gestão","inovação","empreender","projetos","planejamento","criatividade"],source:{name:"Sebrae",title:"Ideias e oportunidades de negócio",url:"https://sebrae.com.br/sites/PortalSebrae/empreendedorismo"},resources:[
+    {title:"Comece pela oportunidade",kind:"Panorama",description:"Explore conteúdos para observar necessidades e oportunidades.",url:"https://sebrae.com.br/sites/PortalSebrae/empreendedorismo"},
+    {title:"Planeje uma iniciativa",kind:"Conexão",description:"Conheça ferramentas para estruturar ideias, público e proposta de valor.",url:"https://sebrae.com.br/sites/PortalSebrae"},
+    {title:"Desenvolva seu projeto",kind:"Aprofundamento",description:"Encontre orientações para testar e aprimorar uma ideia.",url:"https://sebrae.com.br/sites/PortalSebrae/cursosonline"}
+  }
 ];
 
 export const INTEREST_AREAS = ["Ciências e natureza","Humanas e sociedade","Tecnologia e criação","Negócios e gestão"];

@@ -14,7 +14,7 @@ const DETAILS={
   "Ciências e natureza":{icon:"✦",description:"Suas escolhas mostram curiosidade por investigação, fenômenos naturais e descoberta.",topics:["astronomia","mata-atlantica","energia-renovavel"]},
   "Humanas e sociedade":{icon:"◉",description:"Suas escolhas apontam interesse por pessoas, cultura, comportamento e como a sociedade funciona.",topics:["psicologia","historia-brasil"]},
   "Tecnologia e criação":{icon:"⌘",description:"Você parece gostar de experimentar, construir e resolver desafios com criatividade.",topics:["inteligencia-artificial","programacao"]},
-  "Negócios e gestão":{icon:"↗",description:"Suas respostas indicam interesse em transformar ideias em projetos e organizar recursos.",topics:["programacao","energia-renovavel"]}
+  "Negócios e gestão":{icon:"↗",description:"Suas respostas indicam interesse em transformar ideias em projetos e organizar recursos.",topics:["empreendedorismo","energia-renovavel"]}
 };
 
 export default function InterestAssessment(){
