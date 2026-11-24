@@ -16,20 +16,33 @@ const LINKS = [
 
 export default function AppNavigation() {
   const pathname = usePathname();
+
   return (
     <header className="site-nav">
       <div className="site-nav-inner">
         <Link className="site-brand" href="/" aria-label="Trilha Jovem, início">
           <span className="brand-symbol">t.</span>
-          <span>trilha<span className="brand-accent">jovem</span></span>
+          <span className="brand-word">trilha<span className="brand-accent">jovem</span></span>
         </Link>
+
+        <span className="site-demo-label"><span /> Protótipo</span>
+
         <nav className="site-nav-links" aria-label="Navegação principal">
           {LINKS.map((item) => {
             const active = item.href === "/" ? pathname === "/" : pathname === item.href.split("?")[0];
-            return <Link key={item.href} href={item.href} className={active ? "site-nav-link active" : "site-nav-link"} aria-current={active ? "page" : undefined}><span className="nav-icon" aria-hidden="true">{item.icon}</span><span>{item.label}</span></Link>;
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={active ? "site-nav-link active" : "site-nav-link"}
+                aria-current={active ? "page" : undefined}
+              >
+                <span className="nav-icon" aria-hidden="true">{item.icon}</span>
+                <span>{item.label}</span>
+              </Link>
+            );
           })}
         </nav>
-        <span className="site-demo-label"><span /> Protótipo</span>
       </div>
     </header>
   );
