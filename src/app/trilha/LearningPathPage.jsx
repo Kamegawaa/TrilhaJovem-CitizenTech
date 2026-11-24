@@ -26,7 +26,7 @@ export default function LearningPathPage() {
   const progress=Math.round(completed.length/3*100);
 
   return (
-    <main className="page-container">
+    <main className={"page-container theme-"+discovery.accent}>
       <section className="page-hero path-page-hero"><div><span className="eyebrow">DA CURIOSIDADE AO CONHECIMENTO</span><h1>Uma descoberta pode abrir <span>muitos caminhos.</span></h1><p>Escolha um tema e avance no seu ritmo. A trilha é um ponto de partida — você decide até onde quer chegar.</p></div><div className="path-progress-card"><div className="progress-ring" style={{"--progress":String(progress)+"%"}}><strong>{progress}%</strong></div><span>SEU PROGRESSO</span><small>{completed.length} de 3 etapas concluídas</small></div></section>
       <section className="topic-picker"><div><span className="eyebrow">ESCOLHA UM TEMA</span><h2>Qual assunto vamos explorar?</h2></div><div className="topic-select-row"><select value={discovery.id} onChange={(event)=>selectTopic(event.target.value)} aria-label="Selecionar assunto">{DISCOVERIES.map((item)=><option key={item.id} value={item.id}>{item.query}</option>)}</select><span>⌄</span></div></section>
       <section className="path-feature-card"><div className={"path-feature-art tone-"+discovery.accent}><span>{discovery.symbol}</span><small>{discovery.tag}</small></div><div className="path-feature-copy"><span className="category-label">{discovery.category} · {discovery.readTime}</span><h2>{discovery.title}</h2><p>{discovery.summary}</p><div className="path-question"><small>PERGUNTA-GUIA</small><strong>{discovery.question}</strong></div></div></section>
